@@ -37,7 +37,7 @@ jejak-kirim/
 ## Panduan Instalasi Lokal (Untuk Tim Developer)
 ### 1. Install tools yang dibutuhkan
 
-| Tools | Unduh | Catatan |
+| Tools | Unduh |
 |---|---|---|
 | Node.js | https://nodejs.org | 
 | Git | https://git-scm.com | 
@@ -51,7 +51,6 @@ Buka terminal **baru**, lalu jalankan:
 node -v
 npm -v
 git --version
-
 ```
 
 ### 3. Atur identitas Git (sekali saja per laptop)
@@ -98,5 +97,4 @@ npm run dev
 5. Buka **Verifikasi Riwayat**, cari `PKT-002`.
 
 ## Tim Pengembang
-**Kelompok 5**
 Muhamad Hafiz, Muhammad Iqbal Febrian, Imas Anisa
