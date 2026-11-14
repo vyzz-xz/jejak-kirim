@@ -38,7 +38,7 @@ jejak-kirim/
 ### 1. Install tools yang dibutuhkan
 
 | Tools | Unduh |
-|---|---|---|
+|---|---|
 | Node.js | https://nodejs.org | 
 | Git | https://git-scm.com | 
 | Visual Studio Code | https://code.visualstudio.com |
