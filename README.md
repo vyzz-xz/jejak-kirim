@@ -88,13 +88,5 @@ npm install
 npm run dev
 ```
 
-### 8. Coba alur aplikasi
-
-1. Pilih **Pengirim**, buat paket baru (misalnya `PKT-002`).
-2. Pindah ke **Gudang**, klik **Terima di gudang**.
-3. Pindah ke **Kurir**, klik **Mulai kirim**, lalu **Tandai terkirim**.
-4. Pindah ke **Penerima**, klik **Konfirmasi diterima**.
-5. Buka **Verifikasi Riwayat**, cari `PKT-002`.
-
 ## Tim Pengembang
 Muhamad Hafiz, Muhammad Iqbal Febrian, Imas Anisa
