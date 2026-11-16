@@ -1,15 +1,13 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useShipmentStore } from '../stores/shipments'
+import { ref } from 'vue'
+import { useAutoRefresh } from '../composables/useAutoRefresh'
 import { ACCOUNTS, short } from '../constants'
 import ShipmentTable from '../components/ShipmentTable.vue'
 import MessageBar from '../components/MessageBar.vue'
 
-const store = useShipmentStore()
+const store = useAutoRefresh()
 const id = ref('')
 const deskripsi = ref('')
-
-onMounted(store.enter)
 
 async function submit() {
   if (!id.value.trim() || !deskripsi.value.trim()) return
