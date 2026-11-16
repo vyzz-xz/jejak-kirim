@@ -1,11 +1,9 @@
 <script setup>
-import { onMounted } from 'vue'
-import { useShipmentStore } from '../stores/shipments'
+import { useAutoRefresh } from '../composables/useAutoRefresh'
 import ShipmentTable from '../components/ShipmentTable.vue'
 import MessageBar from '../components/MessageBar.vue'
 
-const store = useShipmentStore()
-onMounted(store.enter)
+const store = useAutoRefresh()
 </script>
 
 <template>
