@@ -26,3 +26,11 @@ export const ROLE_DESC = {
 
 // Urutan peran sesuai perjalanan paket
 export const CHAIN = ['pengirim', 'gudang', 'kurir', 'penerima']
+
+// Status paket yang menunggu tindakan tiap peran (angka sama dengan enum Status di contract)
+export const ACTION_STATUS = {
+  pengirim: [],
+  gudang: [1],
+  kurir: [2, 3],
+  penerima: [4],
+}

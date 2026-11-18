@@ -6,18 +6,18 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: '/', component: PilihPeranView },
-    { path: '/admin', component: () => import('../views/AdminView.vue'), meta: { role: 'admin' } },
-    { path: '/pengirim', component: () => import('../views/PengirimView.vue'), meta: { role: 'pengirim' } },
-    { path: '/gudang', component: () => import('../views/GudangView.vue'), meta: { role: 'gudang' } },
-    { path: '/kurir', component: () => import('../views/KurirView.vue'), meta: { role: 'kurir' } },
-    { path: '/penerima', component: () => import('../views/PenerimaView.vue'), meta: { role: 'penerima' } },
+    { path: '/dashboard', component: () => import('../views/DashboardView.vue'), meta: { auth: true } },
+    { path: '/admin', component: () => import('../views/AdminView.vue'), meta: { auth: true, role: 'admin' } },
     { path: '/verifikasi', component: () => import('../views/VerifikasiView.vue') },
   ],
 })
 
-// Halaman peran hanya bisa dibuka kalau peran yang dipilih cocok
+// Halaman kerja hanya bisa dibuka setelah masuk dengan peran yang sesuai
 router.beforeEach((to) => {
-  if (to.meta.role && useSessionStore().role !== to.meta.role) return '/'
+  const session = useSessionStore()
+  if (to.meta.auth && !session.role) return '/'
+  if (to.meta.role && session.role !== to.meta.role) return '/'
+  if (to.path === '/dashboard' && session.role === 'admin') return '/admin'
 })
 
 export default router

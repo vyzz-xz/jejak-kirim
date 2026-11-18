@@ -13,3 +13,4 @@ export const confirmReceived = impl.confirmReceived
 export const listShipments = impl.listShipments
 export const getShipment = impl.getShipment
 export const getHistory = impl.getHistory
+export const getNetworkInfo = impl.getNetworkInfo

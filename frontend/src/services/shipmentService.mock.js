@@ -62,3 +62,9 @@ export async function confirmReceived(role, id) {
 export async function listShipments() { await wait(); return shipments.map(copy) }
 export async function getShipment(id) { await wait(); return copy(find(id)) }
 export async function getHistory(id) { await wait(); return copy(find(id)).history }
+
+// Jumlah "transaksi" dummy = jumlah entri riwayat, supaya angka blok ikut naik
+export async function getNetworkInfo() {
+  const blok = shipments.reduce((n, s) => n + s.history.length, 0)
+  return { mode: 'dummy', rpc: '-', chainId: '-', blockNumber: blok, contract: '-' }
+}

@@ -86,3 +86,15 @@ export const listShipments = () =>
   })
 export const getShipment = (id) => baca(() => bacaShipment(id, true))
 export const getHistory = (id) => baca(async () => (await bacaShipment(id, true)).history)
+
+export const getNetworkInfo = () =>
+  baca(async () => {
+    const [blockNumber, net] = await Promise.all([provider.getBlockNumber(), provider.getNetwork()])
+    return {
+      mode: 'blockchain',
+      rpc: rpcUrl,
+      chainId: Number(net.chainId),
+      blockNumber,
+      contract: deployed.address,
+    }
+  })

@@ -1,19 +1,20 @@
 :root {
-  --ink: #0b1f3a;
-  --paper: #f3f5f8;
-  --surface: #ffffff;
-  --line: #dde3ea;
-  --muted: #5b6b7f;
-  --teal: #0a7d71;
-  --teal-dark: #086157;
-  --teal-soft: #d5f2ee;
-  --amber: #8a5a0b;
-  --amber-soft: #fdf0d5;
-  --green: #067647;
-  --green-soft: #e0f5ea;
-  --red: #b42318;
-  --red-soft: #fdeceb;
+  --beton: #e4e7eb;
+  --kertas: #fcfcfa;
+  --tinta: #1b2430;
+  --muted: #4f5d6b;
+  --garis: #c9cfd6;
+  --biru: #1f4e79;
+  --biru-gelap: #173b5c;
+  --biru-muda: #d9e6f2;
+  --rompi: #f2c500;
+  --rompi-muda: #fff6c9;
+  --hijau: #1e7b4f;
+  --hijau-muda: #dff3e7;
+  --merah: #b3261e;
+  --merah-muda: #fbe5e3;
   --font: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', Inter, system-ui, 'Segoe UI', sans-serif;
+  --font-papan: 'Barlow Condensed', 'Arial Narrow', sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -23,40 +24,50 @@ body {
   font-family: var(--font);
   font-size: 15px;
   line-height: 1.55;
-  background: var(--paper);
-  color: var(--ink);
+  background: var(--beton);
+  color: var(--tinta);
   -webkit-font-smoothing: antialiased;
 }
 
-h1 { font-size: clamp(1.7rem, 3.2vw, 2.4rem); line-height: 1.15; letter-spacing: -0.02em; font-weight: 800; margin: 0 0 0.5rem; }
-h2 { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 0.75rem; }
+h1 {
+  font-family: var(--font-papan);
+  font-weight: 700;
+  font-size: clamp(2.4rem, 6vw, 3.6rem);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  margin: 0 0 0.6rem;
+}
+h2 { font-size: 1.05rem; font-weight: 700; margin: 0 0 0.75rem; }
 h3 { font-size: 1rem; font-weight: 700; margin: 1.5rem 0 0.75rem; }
-.lead { color: var(--muted); max-width: 60ch; margin: 0 0 1.75rem; }
+.lead { color: var(--muted); max-width: 62ch; margin: 0 0 2rem; }
+.hint { color: var(--muted); font-size: 0.85rem; margin: 1rem 0 0; }
 
-/* Top bar */
-.topbar { position: sticky; top: 0; z-index: 10; background: var(--ink); color: #fff; }
-.topbar-in { max-width: 1040px; margin: 0 auto; padding: 0.8rem 1.5rem; display: flex; align-items: center; gap: 2rem; }
-.brand { color: #fff; text-decoration: none; font-weight: 800; font-size: 1.1rem; letter-spacing: -0.02em; }
+/* Bar atas */
+.topbar { position: sticky; top: 0; z-index: 10; background: var(--kertas); border-bottom: 3px solid var(--tinta); }
+.topbar-in { max-width: 1080px; margin: 0 auto; padding: 0.6rem 1.5rem; display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; }
+.brand { font-family: var(--font-papan); font-weight: 700; font-size: 1.8rem; line-height: 1; letter-spacing: 0.01em; color: var(--tinta); text-decoration: none; }
 .topbar nav { display: flex; gap: 0.25rem; flex: 1; }
-.topbar nav a { color: #b8c4d6; text-decoration: none; padding: 0.4rem 0.75rem; border-radius: 6px; font-weight: 500; }
-.topbar nav a:hover { color: #fff; }
-.topbar nav a.router-link-exact-active { color: #fff; background: rgba(255, 255, 255, 0.12); }
-.whoami { display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; font-weight: 600; color: #dbe4f0; }
-.addr-chip { background: rgba(255, 255, 255, 0.12); border-radius: 999px; padding: 0.15rem 0.65rem; font-weight: 500; font-size: 0.8rem; }
+.topbar nav a { color: var(--tinta); text-decoration: none; padding: 0.45rem 0.7rem; font-weight: 500; }
+.topbar nav a:hover { box-shadow: inset 0 -3px 0 var(--garis); }
+.topbar nav a.router-link-exact-active { font-weight: 700; box-shadow: inset 0 -3px 0 var(--rompi); }
+.akun { display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; }
+.akun .peran { font-weight: 700; }
+.akun .alamat { color: var(--muted); font-variant-numeric: tabular-nums; }
 
-.page { max-width: 1040px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+.page { max-width: 1080px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
 
-/* Panel dan layout */
-.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 1.5rem; }
+/* Permukaan */
+.panel { background: var(--kertas); border: 1px solid var(--garis); border-radius: 4px; margin-bottom: 1.5rem; }
 .panel-pad { padding: 1.25rem 1.5rem; }
 .split { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+.bar h2 { margin: 0; }
 
-/* Form */
+/* Formulir */
 label { display: block; font-weight: 600; font-size: 0.85rem; margin: 1rem 0 0.35rem; }
 label:first-child { margin-top: 0; }
-input { width: 100%; padding: 0.65rem 0.8rem; border: 1px solid var(--line); border-radius: 6px; font: inherit; background: #fff; color: var(--ink); }
-input:disabled { background: var(--paper); color: var(--muted); }
-input:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+input { width: 100%; padding: 0.65rem 0.8rem; border: 1px solid var(--garis); border-radius: 3px; font: inherit; background: #fff; color: var(--tinta); }
+input:disabled { background: var(--beton); color: var(--muted); }
 .form-actions { margin-top: 1.25rem; }
 .search { display: flex; gap: 0.5rem; }
 .search input { flex: 1; }
@@ -64,31 +75,40 @@ input:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid 
 /* Tombol */
 button {
   font: inherit; font-weight: 600; cursor: pointer;
-  background: var(--teal); color: #fff; border: 1px solid var(--teal);
-  border-radius: 6px; padding: 0.5rem 1rem;
-  transition: background-color 0.15s, border-color 0.15s;
+  background: var(--biru); color: #fff;
+  border: 2px solid var(--biru); border-radius: 3px;
+  padding: 0.5rem 1rem;
+  transition: background-color 0.15s, color 0.15s;
 }
-button:hover:not(:disabled) { background: var(--teal-dark); border-color: var(--teal-dark); }
-button:disabled { opacity: 0.55; cursor: not-allowed; }
-button.ghost { background: transparent; color: var(--teal-dark); border-color: var(--line); }
-button.ghost:hover:not(:disabled) { background: var(--teal-soft); border-color: var(--teal); }
-.actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+button:hover:not(:disabled) { background: var(--biru-gelap); border-color: var(--biru-gelap); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+button.ghost { background: transparent; color: var(--biru); border-color: var(--biru); }
+button.ghost:hover:not(:disabled) { background: var(--biru); color: #fff; }
+button.kecil { padding: 0.3rem 0.7rem; font-size: 0.85rem; }
+:focus-visible { outline: 3px solid var(--tinta); outline-offset: 2px; }
+
+/* Filter */
+.tabs { display: flex; border: 2px solid var(--tinta); border-radius: 3px; overflow: hidden; }
+.tabs button { background: transparent; color: var(--tinta); border: 0; border-radius: 0; padding: 0.4rem 0.9rem; font-size: 0.85rem; }
+.tabs button:hover:not(:disabled) { background: var(--beton); }
+.tabs button[aria-pressed='true'] { background: var(--tinta); color: #fff; }
 
 /* Pesan */
-.msg { padding: 0.75rem 1rem; border-radius: 8px; margin: 0 0 1.25rem; font-weight: 500; border: 1px solid; }
-.msg.ok { background: var(--green-soft); color: var(--green); border-color: #b7e4cb; }
-.msg.error { background: var(--red-soft); color: var(--red); border-color: #f5c2be; }
+.msg { padding: 0.75rem 1rem; border-radius: 4px; margin: 0 0 1.25rem; font-weight: 500; border: 1px solid; }
+.msg.ok { background: var(--hijau-muda); color: var(--hijau); border-color: #b7e4cb; }
+.msg.error { background: var(--merah-muda); color: var(--merah); border-color: #f0b8b3; }
 
 /* Tabel (halaman Admin) */
 .table-wrap { overflow-x: auto; }
 .table { width: 100%; border-collapse: collapse; }
-.table th { text-align: left; font-size: 0.8rem; font-weight: 600; color: var(--muted); padding: 0.7rem 1.25rem; border-bottom: 1px solid var(--line); }
-.table td { padding: 0.8rem 1.25rem; border-bottom: 1px solid var(--line); }
+.table th { text-align: left; font-size: 0.8rem; font-weight: 600; color: var(--muted); padding: 0.7rem 1.25rem; border-bottom: 2px solid var(--tinta); }
+.table td { padding: 0.8rem 1.25rem; border-bottom: 1px dashed var(--garis); }
 .table tr:last-child td { border-bottom: 0; }
 .addr { font-family: ui-monospace, Consolas, monospace; font-size: 0.85rem; word-break: break-all; }
 
-@media (max-width: 640px) {
-  .topbar-in { flex-wrap: wrap; gap: 0.5rem 1rem; padding: 0.7rem 1rem; }
+@media (max-width: 720px) {
+  .topbar-in { padding: 0.6rem 1rem; gap: 0.6rem 1rem; }
+  .topbar nav { flex-basis: 100%; order: 3; }
   .page { padding: 1.5rem 1rem 3rem; }
   .split { grid-template-columns: 1fr; }
 }

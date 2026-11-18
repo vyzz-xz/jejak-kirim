@@ -1,4 +1,6 @@
 import '@fontsource-variable/plus-jakarta-sans'
+import '@fontsource/barlow-condensed/600.css'
+import '@fontsource/barlow-condensed/700.css'
 import './assets/main.css'
 
 import { createApp } from 'vue'
