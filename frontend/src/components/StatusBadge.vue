@@ -8,8 +8,7 @@ defineProps({ status: Number })
 </template>
 
 <style scoped>
-.badge { display: inline-block; padding: 0.15rem 0.7rem; border-radius: 999px; font-size: 0.8rem; font-weight: 600; background: #e8edf3; color: #233752; }
-.s2, .s3 { background: var(--amber-soft); color: var(--amber); }
-.s4 { background: var(--teal-soft); color: var(--teal-dark); }
-.s5 { background: var(--green-soft); color: var(--green); }
+.badge { display: inline-block; padding: 0.15rem 0.7rem; border-radius: 999px; font-size: 0.8rem; font-weight: 700; background: var(--beton); color: var(--tinta); border: 1px solid var(--garis); }
+.s2, .s3, .s4 { background: var(--biru-muda); color: var(--biru-gelap); border-color: #b7cde2; }
+.s5 { background: var(--hijau-muda); color: var(--hijau); border-color: #b7e4cb; }
 </style>

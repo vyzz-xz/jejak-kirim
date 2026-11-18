@@ -1,10 +1,12 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import * as api from '../services/shipmentService'
 import StatusBadge from '../components/StatusBadge.vue'
 import RouteTracker from '../components/RouteTracker.vue'
 import Timeline from '../components/Timeline.vue'
 
+const route = useRoute()
 const id = ref('')
 const result = ref(null)
 const error = ref('')
@@ -19,6 +21,14 @@ async function cari() {
     error.value = e.message
   }
 }
+
+// Dibuka dari daftar paket: ID terisi dan langsung dicari
+onMounted(() => {
+  if (typeof route.query.id === 'string' && route.query.id) {
+    id.value = route.query.id
+    cari()
+  }
+})
 </script>
 
 <template>
@@ -38,7 +48,7 @@ async function cari() {
   <section v-if="result" class="panel panel-pad">
     <header class="head">
       <div>
-        <h2>{{ result.id }}</h2>
+        <p class="kode">{{ result.id }}</p>
         <p class="desc">{{ result.deskripsi }}</p>
       </div>
       <StatusBadge :status="result.status" />
@@ -50,7 +60,7 @@ async function cari() {
 </template>
 
 <style scoped>
-.head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem; }
-.head h2 { margin: 0; font-size: 1.4rem; }
-.desc { margin: 0.15rem 0 0; color: var(--muted); }
+.head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1.75rem; }
+.kode { margin: 0; font-family: var(--font-papan); font-weight: 700; font-size: 2.4rem; line-height: 1; }
+.desc { margin: 0.25rem 0 0; color: var(--muted); }
 </style>
