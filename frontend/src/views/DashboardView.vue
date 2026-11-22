@@ -1,8 +1,9 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useAutoRefresh } from '../composables/useAutoRefresh'
 import { useSessionStore } from '../stores/session'
-import { ROLES, ROLE_DESC, ACTION_STATUS, ACCOUNTS, short } from '../constants'
+import { listParticipants } from '../services/shipmentService'
+import { ROLES, ROLE_DESC, ACTION_STATUS, short } from '../constants'
 import StationLine from '../components/StationLine.vue'
 import ShipmentTable from '../components/ShipmentTable.vue'
 import MessageBar from '../components/MessageBar.vue'
@@ -39,12 +40,34 @@ const kosong = computed(() => {
     : 'Belum ada paket. Paket muncul di sini setelah pengirim membuat pengiriman.'
 })
 
-// Formulir pengiriman (khusus pengirim)
+// Formulir pengiriman (khusus pengirim): penerima dipilih dari akun yang terdaftar sebagai Penerima
 const id = ref('')
 const deskripsi = ref('')
+const penerimaList = ref([])
+const penerima = ref('')
+let timerPenerima
+
+async function muatPenerima() {
+  try {
+    const semua = await listParticipants()
+    penerimaList.value = semua.filter((p) => p.role === 5)
+    if (!penerimaList.value.some((p) => p.address === penerima.value)) {
+      penerima.value = penerimaList.value[0]?.address ?? ''
+    }
+  } catch { /* abaikan, daftar terakhir tetap dipakai */ }
+}
+
+onMounted(() => {
+  if (role.value === 'pengirim') {
+    muatPenerima()
+    timerPenerima = setInterval(muatPenerima, 5000)
+  }
+})
+onUnmounted(() => clearInterval(timerPenerima))
+
 async function submit() {
-  if (!id.value.trim() || !deskripsi.value.trim()) return
-  await store.create(id.value.trim(), deskripsi.value.trim(), ACCOUNTS.penerima)
+  if (!id.value.trim() || !deskripsi.value.trim() || !penerima.value) return
+  await store.create(id.value.trim(), deskripsi.value.trim(), penerima.value)
   if (store.message?.type === 'ok') { id.value = ''; deskripsi.value = '' }
 }
 </script>
@@ -69,9 +92,14 @@ async function submit() {
         <label for="desk">Deskripsi singkat</label>
         <input id="desk" v-model="deskripsi" placeholder="contoh: Paket elektronik" @keyup.enter="submit" />
         <label for="pen">Penerima</label>
-        <input id="pen" :value="short(ACCOUNTS.penerima)" disabled />
+        <select id="pen" v-model="penerima" :disabled="!penerimaList.length">
+          <option v-for="(p, i) in penerimaList" :key="p.address" :value="p.address">
+            Penerima {{ i + 1 }} ({{ short(p.address) }})
+          </option>
+        </select>
+        <p v-if="!penerimaList.length" class="hint">Belum ada penerima terdaftar. Minta Admin mendaftarkan akun penerima.</p>
         <div class="form-actions">
-          <button :disabled="store.loading" @click="submit">Buat pengiriman</button>
+          <button :disabled="store.loading || !penerima" @click="submit">Buat pengiriman</button>
         </div>
       </div>
     </section>

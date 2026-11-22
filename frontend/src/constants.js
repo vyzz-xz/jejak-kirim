@@ -34,3 +34,7 @@ export const ACTION_STATUS = {
   kurir: [2, 3],
   penerima: [4],
 }
+
+// Nomor peran di smart contract (enum Role): 0 = tanpa peran
+export const ROLE_NUM = { admin: 1, pengirim: 2, gudang: 3, kurir: 4, penerima: 5 }
+export const ROLE_DARI_NUM = { 1: 'admin', 2: 'pengirim', 3: 'gudang', 4: 'kurir', 5: 'penerima' }

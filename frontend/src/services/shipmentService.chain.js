@@ -1,44 +1,54 @@
-import { JsonRpcProvider, Contract, ZeroHash } from 'ethers'
+import { JsonRpcProvider, Contract, Wallet, ZeroHash, isAddress, parseEther, formatEther } from 'ethers'
 import abi from '../contracts/abi.json'
 import deployed from '../contracts/address.json'
-import { ACCOUNTS } from '../constants'
+import { aktifKey } from './identity'
 
 // PENTING: objek ethers disimpan sebagai variabel biasa, jangan dimasukkan ke ref/reactive.
-// Alamat RPC default mengikuti alamat web, jadi device lain otomatis menunjuk ke laptop host.
+// Alamat RPC default mengikuti alamat web, jadi perangkat lain otomatis menunjuk ke laptop host.
 const rpcUrl = import.meta.env.VITE_RPC_URL || `http://${window.location.hostname}:8545`
 const provider = new JsonRpcProvider(rpcUrl, undefined, { batchMaxCount: 1 })
 const contract = new Contract(deployed.address, abi, provider)
 
 // Mengambil alasan penolakan dari contract supaya pesan di layar jelas
 function pesanError(e) {
-    const sumber = [e?.reason, e?.revert?.args?.[0], e?.info?.error?.message, e?.shortMessage, e?.message]
-    for (const s of sumber) {
-        if (typeof s !== 'string') continue
-        const m = s.match(/reason string '([^']+)'/)
-        if (m) return m[1]
-    }
-    if (typeof e?.reason === 'string') return e.reason
-    if (typeof e?.revert?.args?.[0] === 'string') return e.revert.args[0]
+  const sumber = [e?.reason, e?.revert?.args?.[0], e?.info?.error?.message, e?.shortMessage, e?.message]
+  for (const s of sumber) {
+    if (typeof s !== 'string') continue
+    const m = s.match(/reason string '([^']+)'/)
+    if (m) return m[1]
+  }
+  if (typeof e?.reason === 'string') return e.reason
+  if (typeof e?.revert?.args?.[0] === 'string') return e.revert.args[0]
 
-    const teks = String(e?.shortMessage || e?.message || '')
-    if (e?.code === 'NETWORK_ERROR' || /fetch|network|ECONNREFUSED|detect network/i.test(teks)) {
-        return 'Tidak bisa terhubung ke node blockchain. Pastikan node berjalan dan alamat RPC benar'
-    }
-    if (/could not decode result data/i.test(teks)) {
-        return 'Contract tidak ditemukan di node. Jalankan deploy ulang lalu muat ulang halaman'
-    }
-    return teks || 'Transaksi gagal'
+  const teks = String(e?.shortMessage || e?.message || '')
+  if (/insufficient funds/i.test(teks)) {
+    return 'Saldo akun kosong. Minta Admin memberi saldo uji'
+  }
+  if (e?.code === 'NETWORK_ERROR' || /fetch|network|ECONNREFUSED|detect network/i.test(teks)) {
+    return 'Tidak bisa terhubung ke node blockchain. Pastikan node berjalan dan alamat RPC benar'
+  }
+  if (/could not decode result data/i.test(teks)) {
+    return 'Contract tidak ditemukan di node. Jalankan deploy ulang lalu muat ulang halaman'
+  }
+  return teks || 'Transaksi gagal'
 }
 
-// Menjalankan transaksi memakai akun sesuai peran, lalu menunggu konfirmasi
-async function tulis(role, fn, ...args) {
-    try {
-        const signer = await provider.getSigner(ACCOUNTS[role])
-        const tx = await contract.connect(signer)[fn](...args)
-        await tx.wait()
-    } catch (e) {
-        throw new Error(pesanError(e))
-    }
+// Penanda tangan transaksi = identitas yang sedang aktif di perangkat ini.
+// Hak akses ditentukan smart contract dari akun ini, bukan dari tampilan.
+function penandatangan() {
+  const kunci = aktifKey()
+  if (!kunci) throw new Error('Belum masuk dengan identitas di perangkat ini')
+  return new Wallet(kunci, provider)
+}
+
+// Menjalankan transaksi, lalu menunggu konfirmasi
+async function tulis(fn, ...args) {
+  try {
+    const tx = await contract.connect(penandatangan())[fn](...args)
+    await tx.wait()
+  } catch (e) {
+    throw new Error(pesanError(e))
+  }
 }
 
 async function baca(fn) {
@@ -72,12 +82,13 @@ async function bacaShipment(id, denganRiwayat) {
   }
 }
 
+// Parameter role dipertahankan supaya sama dengan versi mock, tetapi tidak dipakai
 export const createShipment = (role, id, deskripsi, penerima) =>
-  tulis(role, 'createShipment', id, deskripsi, penerima)
-export const receiveAtWarehouse = (role, id) => tulis(role, 'receiveAtWarehouse', id, ZeroHash)
-export const startDelivery = (role, id) => tulis(role, 'startDelivery', id)
-export const markDelivered = (role, id) => tulis(role, 'markDelivered', id, ZeroHash)
-export const confirmReceived = (role, id) => tulis(role, 'confirmReceived', id)
+  tulis('createShipment', id, deskripsi, penerima)
+export const receiveAtWarehouse = (role, id) => tulis('receiveAtWarehouse', id, ZeroHash)
+export const startDelivery = (role, id) => tulis('startDelivery', id)
+export const markDelivered = (role, id) => tulis('markDelivered', id, ZeroHash)
+export const confirmReceived = (role, id) => tulis('confirmReceived', id)
 
 export const listShipments = () =>
   baca(async () => {
@@ -98,3 +109,38 @@ export const getNetworkInfo = () =>
       contract: deployed.address,
     }
   })
+
+// ---- Peran dan pendaftaran akun ----
+
+// Peran sebuah akun menurut smart contract (0 = belum terdaftar)
+export const getRoleOf = (address) => baca(async () => Number(await contract.roles(address)))
+
+// Semua akun yang pernah diberi peran (dari event RoleAssigned), dengan peran dan saldo terkini
+export const listParticipants = () =>
+  baca(async () => {
+    const events = await contract.queryFilter(contract.filters.RoleAssigned(), 0)
+    const alamat = [...new Set(events.map((e) => e.args.account))]
+    return Promise.all(
+      alamat.map(async (a) => ({
+        address: a,
+        role: Number(await contract.roles(a)),
+        balance: formatEther(await provider.getBalance(a)),
+      }))
+    )
+  })
+
+// Admin mendaftarkan akun ke sebuah peran (0 = cabut), lalu memberi saldo uji untuk biaya transaksi
+export async function registerParticipant(address, roleNum) {
+  try {
+    if (!isAddress(address)) throw new Error('Alamat akun tidak valid')
+    const signer = penandatangan()
+    const tx = await contract.connect(signer).assignRole(address, roleNum)
+    await tx.wait()
+    if (roleNum !== 0 && (await provider.getBalance(address)) < parseEther('0.5')) {
+      const kirim = await signer.sendTransaction({ to: address, value: parseEther('1') })
+      await kirim.wait()
+    }
+  } catch (e) {
+    throw new Error(pesanError(e))
+  }
+}

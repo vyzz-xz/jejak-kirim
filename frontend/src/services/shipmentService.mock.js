@@ -68,3 +68,14 @@ export async function getNetworkInfo() {
   const blok = shipments.reduce((n, s) => n + s.history.length, 0)
   return { mode: 'dummy', rpc: '-', chainId: '-', blockNumber: blok, contract: '-' }
 }
+
+// Mode dummy: pendaftaran akun hanya ada di mode blockchain
+export async function getRoleOf() {
+  return 0
+}
+export async function listParticipants() {
+  return [{ address: ACCOUNTS.penerima, role: 5, balance: '-' }]
+}
+export async function registerParticipant() {
+  throw new Error('Pendaftaran akun hanya tersedia di mode blockchain')
+}

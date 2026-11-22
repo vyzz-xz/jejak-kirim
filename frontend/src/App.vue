@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, watch } from 'vue'
 import { RouterLink, RouterView, useRouter } from 'vue-router'
 import { useSessionStore } from './stores/session'
 import { useNetworkStore } from './stores/network'
@@ -10,13 +10,21 @@ const session = useSessionStore()
 const net = useNetworkStore()
 const router = useRouter()
 
-// Memeriksa status jaringan setiap 4 detik
+// Memeriksa jaringan dan peran akun setiap 4 detik
 let timer
 onMounted(() => {
   net.refresh()
-  timer = setInterval(net.refresh, 4000)
+  timer = setInterval(() => {
+    net.refresh()
+    session.verifikasi()
+  }, 4000)
 })
 onUnmounted(() => clearInterval(timer))
+
+// Kembali ke halaman Masuk jika sesi berakhir (misalnya peran dicabut Admin)
+watch(() => session.role, (r) => {
+  if (!r) router.push('/')
+})
 
 function keluar() {
   session.logout()
