@@ -4,8 +4,8 @@ pragma solidity ^0.8.20;
 /// @title JejakKirim
 /// @notice Mencatat perjalanan paket dari pengirim sampai penerima.
 contract JejakKirim {
-    // Peran global. Penerima tidak punya peran global, ia ditunjuk per pengiriman.
-    enum Role { None, Admin, Pengirim, Gudang, Kurir }
+    // Peran global. Penerima juga didaftarkan Admin, dan ditunjuk per pengiriman.
+    enum Role { None, Admin, Pengirim, Gudang, Kurir, Penerima }
 
     // Urutan status harus sama dengan frontend (0 = belum ada).
     enum Status { None, Created, AtWarehouse, InTransit, Delivered, Confirmed }
@@ -31,6 +31,7 @@ contract JejakKirim {
     string[] private shipmentIds;
 
     event RoleAssigned(address indexed account, Role role);
+    event RoleRemoved(address indexed account);
     event StatusUpdated(
         string id,
         Status status,
@@ -55,6 +56,13 @@ contract JejakKirim {
         require(account != address(0), "Alamat tidak valid");
         roles[account] = role;
         emit RoleAssigned(account, role);
+    }
+
+    function removeRole(address account) external onlyRole(Role.Admin) {
+        require(account != address(0), "Alamat tidak valid");
+        roles[account] = Role.None;
+        emit RoleAssigned(account, Role.None);
+        emit RoleRemoved(account);
     }
 
     function createShipment(
